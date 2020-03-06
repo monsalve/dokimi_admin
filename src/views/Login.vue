@@ -68,15 +68,6 @@ import "firebase/auth";
 export default {
     methods: {
         async pressed(){
-/*
-             firebase.auth().createUserWithEmailAndPassword(this.email,this.password)
-            .then(result => {
-                console.log(result.user);
-            }).catch((error) => {
-                console.log(error.code);
-                console.log(error.message);
-            });  
-            */
            try{
                 //const user = firebase.auth().createUserWithEmailAndPassword(this.email, this.password);
                 const user = await firebase.auth().signInWithEmailAndPassword(this.email, this.password);

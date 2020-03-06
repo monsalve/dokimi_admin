@@ -46,7 +46,8 @@ import "firebase/auth";
     export default {
         created(){
             firebase.auth().onAuthStateChanged( user =>{
-                this.loggedIn = !!user;                
+                this.loggedIn = !!user;       
+                console.log(user)         ;
             });
         },
         data(){
