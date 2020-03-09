@@ -26,7 +26,7 @@
                         <th>#</th><th>Correo</th><th>Útimo acceso</th><th>-</th>
                     </thead>
                     <tbody>
-                        <tr  v-for="(usuario ) in listado"  v-bind:key="usuario">
+                        <tr  v-for="(usuario, i ) in listado"  v-bind:key="i">
                             <td>{{ counter + 1}}</td>
                             <td v-text="usuario.email"></td>                        
                             <td v-if="usuario.status === '1'">Activo</td>
@@ -96,8 +96,10 @@
 </template>
 
 <script>
-//import * as firebase from "firebase/app";
-//import "firebase/auth";
+import * as firebase from "firebase/app";
+import "firebase/auth";
+import * as admin from "firebase-admin";
+
     export default {
         data(){
             return {               
@@ -173,10 +175,48 @@
             }
         },
         methods : {
-            listar_usuarios (page,buscar){
-                console.log(page);
-                console.log(buscar)
-            },      
+         /*   listar_usuarios (page,buscar){
+               
+                
+            }, */     
+
+
+            listar_usuarios(nextPageToken,buscar) {
+                console.log(buscar);
+               // let  auth = firebase.auth();
+              //  let  admin = admin();
+                //console.log(auth);
+                //console.log(admin);
+                firebase.auth().onAuthStateChanged( user =>{
+                    this.loggedIn = !!user;       
+                    console.log(user)         ;
+                });
+
+                admin.auth().getUser('fasfaswerwer')
+                .then(function(userRecord) {
+                    // See the UserRecord reference doc for the contents of userRecord.
+                    console.log('Successfully fetched user data:', userRecord.toJSON());
+                })
+                .catch(function(error) {
+                    console.log('Error fetching user data:', error);
+                });
+              //  admin = firebase.admin();
+  // List batch of users, 1000 at a time.
+               // auth = firebase.auth();
+               /* firebase.auth().listUsers(1000, nextPageToken)
+                    .then(function(listUsersResult) {
+                    listUsersResult.users.forEach(function(userRecord) {
+                        console.log('user', userRecord.toJSON());
+                    });
+                    if (listUsersResult.pageToken) {
+                        // List next batch of users.
+                        this.listar_usuarios(listUsersResult.pageToken);
+                    }
+                    })
+                    .catch(function(error) {
+                    console.log('Error listing users:', error);
+                });*/
+            },
 
             editarUsuario(id_edita){
                
@@ -221,7 +261,9 @@
                 me.listar_usuarios(page,buscar);
             },
         },
-        mounted() {            
+        mounted() {   
+            var app = admin.initializeApp();
+            console.log(app) ;
             this.listar_usuarios(1,this.buscar);            
         }
     }
