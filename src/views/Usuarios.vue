@@ -96,7 +96,7 @@
 </template>
 
 <script>
-import * as firebase from "firebase/app";
+//import * as firebase from "firebase/app";
 import "firebase/auth";
 import * as admin from "firebase-admin";
 
@@ -120,7 +120,7 @@ import * as admin from "firebase-admin";
                 criterio: '',
                 counter : 0,
                 listado2: [],
-                
+                token_aux: '',
                 filtro_estado: '',                
                 listado: [
                     {
@@ -180,18 +180,81 @@ import * as admin from "firebase-admin";
                 
             }, */     
 
+            listAllUsers(nextPageToken) {
+                    var serviceAccounts = require("../fireadmin.json");
+                   // var ac = admin.credential.cert(serviceAccounts)
+                    console.log(nextPageToken);
+                    let cred = admin.credential.cert(serviceAccounts);
+                    console.log(cred);
+                    admin.initializeApp({
+                        credential: cred,
+                        databaseURL: "https://login1-b79c2.firebaseio.com"
+                    });
+                    //console.log(ac);
+                    //console.log(nextPageToken+" xxxx " );
+                    
+                    //admin.initializeApp();
+                    
+                    // List batch of users, 1000 at a time.
 
-            listar_usuarios(nextPageToken,buscar) {
-                console.log(buscar);
-               // let  auth = firebase.auth();
-              //  let  admin = admin();
-                //console.log(auth);
-                //console.log(admin);
-                firebase.auth().onAuthStateChanged( user =>{
-                    this.loggedIn = !!user;       
-                    console.log(user)         ;
+                    let me = this;
+                    admin.auth().listUsers()
+                    .then(function(listUsersResult) {
+                        listUsersResult.users.forEach(function(userRecord) {
+                        console.log('user', userRecord.toJSON());
+                        });
+                        if (listUsersResult.pageToken) {
+                        // List next batch of users.
+                            me.listAllUsers(listUsersResult.pageToken);
+                        }
+                    })
+                    .catch(function(error) {
+                        console.log('Error listing users:', error);
+                });
+            },
+            listar_usuarios() {
+               
+
+                //var serviceAccounts = require("../fireadmin.json");
+               
+               /* let uid = 'some-uid';
+                //let me = this;
+                console.log(serviceAccounts);
+                 admin.initializeApp({
+                    credential: admin.credential.cert(serviceAccounts),
+                    databaseURL: "https://login1-b79c2.firebaseio.com"
                 });
 
+                //var myLog = new File("../fireadmin.json", );
+
+                    // See if the file exists
+                 /*   if(myLog.existsSync()){
+                        console.log('The file exists');
+                    }else{
+                        console.log('The file does not exist');
+                    }
+
+                    const fs = require('fs');
+
+                    if(fs.exists("../fireadmin.json")){
+                        console.log("SIIIIIIIII")
+                    }
+                    else{
+                        console.log("NOOOOOOOOOOOOOOO");
+                    }
+                /*
+                admin.auth().createCustomToken(uid)
+                .then(function(customToken) {
+                    // Send token back to client
+                    me.token_aux = customToken;
+                })
+                .catch(function(error) {
+                    console.log('Error creating custom token:', error);
+                });
+
+               */
+                //console.log(buscar);
+              /*
                 admin.auth().getUser('fasfaswerwer')
                 .then(function(userRecord) {
                     // See the UserRecord reference doc for the contents of userRecord.
@@ -200,22 +263,24 @@ import * as admin from "firebase-admin";
                 .catch(function(error) {
                     console.log('Error fetching user data:', error);
                 });
-              //  admin = firebase.admin();
-  // List batch of users, 1000 at a time.
-               // auth = firebase.auth();
-               /* firebase.auth().listUsers(1000, nextPageToken)
-                    .then(function(listUsersResult) {
-                    listUsersResult.users.forEach(function(userRecord) {
+                    */
+                 admin.auth().listUsers(1000,this.customToken)
+                .then(function(listUsersResult) {
+                    console.log(listUsersResult);
+                    /*listUsersResult.users.forEach(function(userRecord) {
                         console.log('user', userRecord.toJSON());
                     });
+                    */
                     if (listUsersResult.pageToken) {
                         // List next batch of users.
-                        this.listar_usuarios(listUsersResult.pageToken);
+                     //   this.listar_usuarios(listUsersResult.pageToken);
                     }
-                    })
-                    .catch(function(error) {
-                    console.log('Error listing users:', error);
-                });*/
+                })
+                .catch(function(error) {
+                        console.log('Error listing users:', error);
+                });
+
+              
             },
 
             editarUsuario(id_edita){
@@ -261,10 +326,10 @@ import * as admin from "firebase-admin";
                 me.listar_usuarios(page,buscar);
             },
         },
-        mounted() {   
-            var app = admin.initializeApp();
-            console.log(app) ;
-            this.listar_usuarios(1,this.buscar);            
+        mounted() {               
+            //const admin = admin.initializeApp();
+            this.listAllUsers();
+           // this.listar_usuarios();            
         }
     }
 </script>

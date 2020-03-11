@@ -4,6 +4,9 @@ import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
 import Secret from "../views/Secret.vue";
 import Usuarios from "../views/Usuarios.vue";
+import Jugadores from "../views/Jugadores.vue";
+import Torneos from "../views/Torneos.vue";
+import Preguntas from "../views/Preguntas.vue";
 
 import * as firebase from "firebase/app";
 import "firebase/auth";
@@ -31,6 +34,24 @@ const routes = [{
         path: "/usuarios",
         name: 'usuarios',
         component: Usuarios,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: "/jugadores",
+        name: 'jugadores',
+        component: Jugadores,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: "/preguntas",
+        name: 'preguntas',
+        component: Preguntas,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: "/torneos",
+        name: 'torneos',
+        component: Torneos,
         meta: { requiresAuth: true }
     },
     {
